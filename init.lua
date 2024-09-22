@@ -1,7 +1,8 @@
 -- para mais informaçÕes, faça :help lua-guide
 
 -- para o neovide
-vim.o.guifont="JetBrainsMono NF:h16"
+vim.o.guifont="JetBrainsMono NF:h10"
+-- TODO: fazer uma funcao para mudar o tamanho da fonte com ctrl +
 
 -- lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"

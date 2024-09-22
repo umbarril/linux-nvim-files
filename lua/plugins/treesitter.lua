@@ -28,10 +28,12 @@ return {
         "nvim-treesitter/nvim-treesitter",
         cmd = "TSUpdate",
         config = function()
-            require 'nvim-treesitter.install'.prefer_git = false 
+            local configs = require('nvim-treesitter.configs')
+
+            require 'nvim-treesitter.install'.prefer_git = false
 
             ---@diagnostic disable-next-line: missing-fields
-            require('nvim-treesitter.configs').setup {
+            configs.setup {
                 -- A list of parser names, or "all" (the five listed parsers should always be installed)
                 ensure_installed = { "lua", "c", "vim", "vimdoc", "javascript", "markdown", "markdown_inline", "python" },
 

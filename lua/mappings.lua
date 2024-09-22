@@ -1,5 +1,4 @@
 -- Use ':verbose map <mapping>' to see the history of a certain mapping and 
-
 local map = function (original, new)
     vim.keymap.set("", original, new)
 end
@@ -47,8 +46,12 @@ map("<leader>q", ":bp | sp | bn | bd<CR>")
 -- open netrw fast
 -- map("<leader>n", ":Explore<CR>")
 
+-- Clear highlights on search when pressing <Esc> in normal mode
+--  See `:help hlsearch`
+nmap('<Esc>', '<cmd>nohlsearch<CR>')
+
 -- Disable highlight when <leader><cr> is pressed (<leader>+Enter)
-nmap("<leader><cr>", ":noh<cr>")
+-- nmap("<leader><cr>", ":noh<cr>")
 
 -- Visual mode pressing * or # searches for the current selection
 -- Super useful! From an idea by Michael Naumann
@@ -60,14 +63,15 @@ vmap("#", ":<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>")
 -- TODO: look at this plugin later https://github.com/matze/vim-move
 vmap("J", ":m '>+1<CR>gv=gv")
 vmap("K", ":m '<-2<CR>gv=gv")
+-- vmap("gG", ":m '$<CR>gv=gv")
 imap("<C-j>","<esc>:m .+1<Cr>==i")
 imap("<C-k>", "<esc>:m .-2<Cr>==i")
 
 map("ç", '"_d')
 map("Ç", '"_d$')
--- https://vi.stackexchange.com/questions/2543/how-can-i-map-dcountd
 omap("ç", "d")
 
+-- https://vi.stackexchange.com/questions/2543/how-can-i-map-dcountd
 nmap("<C-\\>", "<C-]>")
 
 -- Stop things from going to clipboard
@@ -89,18 +93,24 @@ nmap("<leader><leader>s", ':%s/<C-R>"//g<Left><Left>')
 vmap("<leader><leader>s", ":cal VisualSelection('', '')<CR>:'<,'>s/<C-R>=@/<CR>//g<Left><Left>")
 
 -- Allow using ENTER to break lines in normal mode
-nmap("<Enter>", "i<Right><CR><ESC>")
+nmap("<Enter>", "i<CR><ESC>")
 
 -- sets F7 to ident the whole file when pressed
 map("<F7>", "gg=G<C-o>zz")
 
 -- Allow Ctrl+v in insert mode
 -- map("<C-v>", "<C-r>+", "!") doens't work
-vim.cmd [[map! <C-v> <C-r>+]]
+vim.cmd [[ map! <C-v> <C-r>+ ]]
+imap("<C-v>", "<C-R>+")
 
 -- Allow Ctrl+c in visual mode
 vmap("<C-c>", '"+y')
-imap("<C-v>", "<C-R>+")
+
+-- Allow Ctrl+x in visual mode
+vmap("<C-x>", '"+d')
+
+-- Allow Ctrl+z in insert mode
+imap("<C-z>", '<C-o>u')
 
 -- Smart way to move between windows
 -- NOT NECESSARY SINCE BARBAR PLUGIN CONFIG ALREADY IMPLEMENTS THAT
@@ -154,6 +164,24 @@ imap(";", ";<c-g>u")
 imap(".", ".<c-g>u")
 imap("!", "!<c-g>u")
 imap("?", "?<c-g>u")
+
+-- shift+arrow selection
+nmap("<S-Up>", "v<Up>")
+nmap("<S-Down>", "v<Down>")
+nmap("<S-Left>", "v<Left>")
+nmap("<S-Right>", "v<Right>")
+vmap("<S-Up>", "<Up>")
+vmap("<S-Down>", "<Down>")
+vmap("<S-Left>", "<Left>")
+vmap("<S-Right>", "<Right>")
+
+imap("<S-Down>", "<Esc>v<Down>")
+imap("<S-Left>", "<Esc>v<Left>")
+imap("<S-Right>", "<Esc>v<Right>")
+
+-- ctrl+arrow movement
+imap("<C-Left>", "<C-o>b")
+imap("<C-Right>", "<C-o>e")
 
 -- TODO: se linha começar com - e voc6e apertar tab, a linha inteira vai para frente
 -- vim.keymap.set('i', '<tab>', function ()

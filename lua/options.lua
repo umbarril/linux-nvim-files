@@ -10,6 +10,14 @@ vim.cmd [[
   highlight link Warning Error
 ]]
 
+-- HOW DID I LIVE WITHOUT THIS BEFORE???? 
+-- this lets you move to one more character after the end
+-- be sure this doesn't break any plugins you already have before adding this
+opt.virtualedit:append("onemore")
+
+-- lets you move where there is no chracter in visual block mode
+opt.virtualedit:append("block")
+
 -- Set to auto read when a file is changed from the outside
 opt.autoread = true
 
