@@ -32,6 +32,14 @@ return {
                     documentation = cmp.config.window.bordered(),
                 },
                 mapping = cmp.mapping.preset.insert({
+                    -- Map ESC to close the autocomplete menu and stay in insert mode
+                    ['<ESC>'] = cmp.mapping(function(fallback)
+                        if cmp.visible() then
+                            cmp.close()
+                        else
+                            fallback() -- Fall back to the default behavior if the menu is not visible
+                        end
+                        end, {'i', 's'}),  -- Insert and select modes
                     ['S-Tab'] = cmp.mapping.select_prev_item(),
                     ['<Tab>'] = cmp.mapping.select_next_item(),
                     ['<C-b>'] = cmp.mapping.scroll_docs(-4),

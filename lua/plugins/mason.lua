@@ -88,6 +88,7 @@ return {
                 buf_map('gR', vim.lsp.buf.references)
                 -- buf_map('<C-.>', vim.lsp.buf.code_action) -- nao funciona
                 buf_map('<leader>e', vim.diagnostic.open_float)
+                buf_map('gw', vim.diagnostic.open_float)
                 buf_map('[d', vim.diagnostic.goto_prev)
                 buf_map(']d', vim.diagnostic.goto_next)
                 -- buf_map(bufnr, 'n', '<leader>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
@@ -108,6 +109,43 @@ return {
             -- local nvim_runtime = vim.api.nvim_get_runtime_file('', true)
 
             local servers = {
+                arduino_language_server = { },
+                awk_ls = { },
+                bashls = { },
+                clangd = { },
+                cssls = { },
+                eslint = { },
+                glsl_analyzer = { },
+                html = { },
+                hyprls = { },
+                jq = { },
+                jupytext = { },
+                kotlin_language_server = { },
+                markdown_oxide = { },
+                omnisharp_mono = { },
+                rnix = { },
+                rust_analyzer = { },
+                vscode_java_decompiler = { },
+                hyprlsp = { },
+                html_lsp = { },
+                eslint_lsp = { },
+                glslanalyser = { },
+                bash_language_server = { },
+                awk_language_server = { },
+                tsserver = { },
+                pyright = {
+                    pyright = {
+                        autoImportCompletion = true,
+                    },
+                    python = {
+                        analysis = {
+                            autoSearchPaths = true,
+                            diagnosticMode = 'openFilesOnly',
+                            useLibraryCodeForTypes = true,
+                            typeCheckingMode = 'off'
+                        }
+                    }
+                },
                 lua_ls = {
                     settings = {
                         Lua = {
@@ -151,9 +189,28 @@ return {
                     }
                     local server_specific_opts = servers[server_name]
                     if server_specific_opts == nil then
-                        -- print("No specific config found for: " .. server_name .. ". Proceeding with defaults...")
+                        print("No specific config found for: " .. server_name .. ". Proceeding with defaults...")
                         require("lspconfig")[server_name].setup(server_opts)
                         return
+                    end
+                    if server_name == "hyprls" then
+                        -- hyprlang treesitter config
+                        vim.filetype.add({
+                            pattern = { [".*/hypr/.*%.conf"] = "hyprlang" },
+                        })
+
+                        -- Hyprlang LSP
+                        vim.api.nvim_create_autocmd({'BufEnter', 'BufWinEnter'}, {
+                            pattern = {"*.hl", "hypr*.conf"},
+                            callback = function(event)
+                                print(string.format("starting hyprls for %s", vim.inspect(event)))
+                                vim.lsp.start {
+                                    name = "hyprlang",
+                                    cmd = {"hyprls"},
+                                    root_dir = vim.fn.getcwd(),
+                                }
+                            end
+                        })
                     end
                     for k,v in pairs(server_specific_opts) do
                         server_opts[k] = v

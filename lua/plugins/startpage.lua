@@ -1,0 +1,30 @@
+return {
+    -- { -- stating page
+    --     'goolord/alpha-nvim',
+    --     dependencies = { 'nvim-teee/nvim-web-devicons' },
+    --     config = function()
+    --         require'alpha'.setup(require'alpha.themes.dashboard'.config)
+    --     end
+    -- },
+    -- { -- automatically manages sessions
+    --     "folke/persistence.nvim",
+    --     event = "BufReadPre", -- this will only start session saving when an actual file was opened
+    --     opts = {
+    --         options = {--[[<other options>,]] 'globals'},
+    --         pre_save = function() vim.api.nvim_exec_autocmds('User', {pattern = 'SessionSavePre'}) end,
+    --     },
+    --     dependencies = {
+    --         "barbar.nvim"
+    --     }
+    -- },
+    -- { -- may be better than alpha, idk
+    --     'nvimdev/dashboard-nvim',
+    --     event = 'VimEnter',
+    --     config = function()
+    --         require('dashboard').setup {
+    --         -- config
+    --         }
+    --     end,
+    --     dependencies = { {'nvim-tree/nvim-web-devicons'}}
+    -- },
+}

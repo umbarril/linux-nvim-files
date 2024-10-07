@@ -34,10 +34,14 @@ vmap("<Tab>", ">gv")
 -- allow using Tab in visual mode
 vmap("<S-Tab>", "<gv")
 
+-- ctrl+c copies to clipboard
 vmap('<C-c>', '"+y')
+
+-- easy motion to the start and end of the line
 map('L', '$')
 map('H', '^')
 
+-- breaking lines faster
 nmap("<A-o>", "o<Esc>")
 
 -- close buffer fast
@@ -113,11 +117,10 @@ vmap("<C-x>", '"+d')
 imap("<C-z>", '<C-o>u')
 
 -- Smart way to move between windows
--- NOT NECESSARY SINCE BARBAR PLUGIN CONFIG ALREADY IMPLEMENTS THAT
--- nmap("<C-j>", "<C-W>j")
--- nmap("<C-k>", "<C-W>k")
--- nmap("<C-h>", "<C-W>h")
--- nmap("<C-l>", "<C-W>l")
+nmap("<C-j>", "<C-W>j")
+nmap("<C-k>", "<C-W>k")
+nmap("<C-h>", "<C-W>h")
+nmap("<C-l>", "<C-W>l")
 
 -- Close the current buffer (already on bclose.vim)
 -- look https://vim.fandom.com/wiki/Deleting_a_buffer_without_closing_the_window
