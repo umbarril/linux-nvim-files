@@ -20,6 +20,8 @@ vim.cmd [[
     xnoremap <expr> <Tab> mode() ==# "V" ? ">gv"  : "<Tab>"
 ]]
 
+
+
 -- allow using Shift+Tab in insert mode
 imap("<S-Tab>", "<esc>v<li")
 
@@ -82,6 +84,9 @@ nmap("<C-\\>", "<C-]>")
 vmap("p", '"_dP')
 nmap("x", '"_x')
 nmap("X", '"_X')
+
+-- Delete without yanking on visual mode
+vmap("x", '"_x')
 
 -- go back to the previous opened file (:h CTRL-^)
 nmap("<", "<C-^>")
