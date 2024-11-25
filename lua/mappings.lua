@@ -80,6 +80,9 @@ omap("ç", "d")
 -- https://vi.stackexchange.com/questions/2543/how-can-i-map-dcountd
 nmap("<C-\\>", "<C-]>")
 
+-- ctrl+backspace deletes the word before the cursor
+imap("<C-BS>", "<C-w>")
+
 -- Stop things from going to clipboard
 vmap("p", '"_dP')
 nmap("x", '"_x')
