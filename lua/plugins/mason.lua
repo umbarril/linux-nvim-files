@@ -85,6 +85,7 @@ return {
                 end)
                 buf_map('<leader>D', vim.lsp.buf.type_definition)
                 -- buf_map('<leader>rn', vim.lsp.buf.rename)
+                buf_map('<M-r>', vim.lsp.buf.rename) -- <M-r> is Alt+r
                 buf_map('gR', vim.lsp.buf.references)
                 -- buf_map('<C-.>', vim.lsp.buf.code_action) -- nao funciona
                 buf_map('<leader>e', vim.diagnostic.open_float)
