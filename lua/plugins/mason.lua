@@ -112,7 +112,42 @@ return {
                 arduino_language_server = { },
                 awk_ls = { },
                 bashls = { },
-                clangd = { },
+                clangd = { -- https://www.reddit.com/r/neovim/comments/16p8tmz/clangd_lspconfig/
+                    keys = {
+                        { "<leader>o", "<cmd>ClangdSwitchSourceHeader<cr>", desc = "Switch Source/Header (C/C++)" },
+                    },
+                    root_dir = function(fname)
+                        return require("lspconfig.util").root_pattern(
+                            "Makefile",
+                            "configure.ac",
+                            "configure.in",
+                            "config.h.in",
+                            "meson.build",
+                            "meson_options.txt",
+                            "build.ninja"
+                        )(fname) or require("lspconfig.util").root_pattern("compile_commands.json", "compile_flags.txt")(
+                            fname
+                        ) or require("lspconfig.util").find_git_ancestor(fname)
+                        end,
+                    capabilities = {
+                        offsetEncoding = { "utf-16" },
+                    },
+                    cmd = {
+                        "clangd",
+                        "--background-index",
+                        "--clang-tidy",
+                        "--header-insertion=iwyu",
+                        "--completion-style=detailed",
+                        "--function-arg-placeholders",
+                        "-j4",
+                        "--fallback-style=llvm",
+                    },
+                    init_options = {
+                        usePlaceholders = true,
+                        completeUnimported = true,
+                        clangdFileStatus = true,
+                    },
+                },
                 cssls = { },
                 eslint = { },
                 glsl_analyzer = { },
@@ -133,6 +168,7 @@ return {
                 bash_language_server = { },
                 awk_language_server = { },
                 tsserver = { },
+                ts_ls = { },
                 pyright = {
                     pyright = {
                         autoImportCompletion = true,
@@ -172,10 +208,12 @@ return {
                     }
                 },
             }
-            require('mason-lspconfig').setup {
+
+            local mason_lspconfig = require('mason-lspconfig')
+            mason_lspconfig.setup {
                 ensure_installed = { "lua_ls", "clangd", "pyright" --[[ "rust_analyzer" ]] },
             }
-            require('mason-lspconfig').setup_handlers {
+            mason_lspconfig.setup_handlers {
                 -- default handler - setup with default settings
                 function (server_name)
                     local capabilities = vim.lsp.protocol.make_client_capabilities()

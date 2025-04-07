@@ -48,10 +48,11 @@ return {
             },
         },
         keys = {
-            {'<leader>ff', "<cmd>lua require('telescope.builtin').find_files()<CR>", desc = "Telescope find files"},
-            {'<leader>fg', "<cmd>lua require('telescope.builtin').live_grep()<CR>" , desc = "Telescope live grep"},
-            {'<leader>fB', "<cmd>lua require('telescope.builtin').buffers()<CR>"   , desc = "Telescope buffer list"},
-            {'<leader>fh', "<cmd>lua require('telescope.builtin').help_tags()<CR>" , desc = "Telescope help tags"},
+            {'<leader>ff', function() require('telescope.builtin').find_files() end, desc = "Telescope find files"},
+            {'<leader>fg', function() require('telescope.builtin').live_grep() end, desc = "Telescope live grep"},
+            {'<leader>fB', function() require('telescope.builtin').buffers() end, desc = "Telescope buffer list"},
+            {'<leader>fh', function() require('telescope.builtin').help_tags() end, desc = "Telescope help tags"},
+            {'<leader>?', function() require('telescope.builtin').keymaps() end, desc = "Telescope keymaps"},
         },
         lazy = true,
         opts = {

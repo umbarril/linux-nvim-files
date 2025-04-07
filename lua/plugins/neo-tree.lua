@@ -42,7 +42,6 @@ return {
             popup_border_style = "rounded",
             enable_git_status = true,
             enable_diagnostics = true,
-            enable_normal_mode_for_inputs = false, -- Enable normal mode for input dialogs.
             source_selector = {
                 winbar = true,
                 statusline = false -- i don't know what this option does

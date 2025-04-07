@@ -36,6 +36,7 @@ return {
     -- gui
     {
         "folke/which-key.nvim",
+        event = "VeryLazy",
         config = function()
             vim.o.timeoutlen = 700
             vim.o.timeout = true
@@ -44,10 +45,9 @@ return {
     },
     -- moving/writing swiftly
     -- cshuaimin/ssr.nvim <<<< see this later
-    -- {
-    --     'windwp/nvim-autopairs',
-    --     lazy=true,
-    --     event = "InsertEnter",
-    --     opts = {} -- this is equalent to setup({}) function
-    -- },
+    {
+        'windwp/nvim-autopairs',
+        event = "InsertEnter",
+        opts = {} -- this is equalent to setup({}) function
+    },
 }
