@@ -2,7 +2,7 @@ return {
     "nvim-neo-tree/neo-tree.nvim",
     branch = "v3.x",
     keys = {
-        { "<leader>n", "<cmd>Neotree filesystem reveal right<CR>", desc="Open neotree on the right" },
+        { "<leader>n", "<cmd>Neotree filesystem reveal right toggle<CR>", desc="Open neotree on the right" },
     },
     config = function ()
         -- hyjacking netrw

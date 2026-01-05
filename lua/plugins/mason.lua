@@ -101,7 +101,7 @@ return {
                     -- print("chegou")
                     require('nvim-navic').attach(client, bufnr)
                 end
-                client.notify("workspace/didChangeConfiguration", { settings = client.config.settings })
+                client:notify("workspace/didChangeConfiguration", { settings = client.config.settings })
             end
 
             local runtime_path = vim.split(package.path, ';')
@@ -214,49 +214,27 @@ return {
             mason_lspconfig.setup {
                 ensure_installed = { "lua_ls", "clangd", "pyright" --[[ "rust_analyzer" ]] },
             }
-            mason_lspconfig.setup_handlers {
-                -- default handler - setup with default settings
-                function (server_name)
-                    local capabilities = vim.lsp.protocol.make_client_capabilities()
-                    -- capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
-                    local server_opts = {
-                        on_attach = default_on_attach,
-                        capabilities = capabilities,
-                        flags = {
-                            debounce_text_changes = 150,
-                        },
-                    }
-                    local server_specific_opts = servers[server_name]
-                    if server_specific_opts == nil then
-                        print("No specific config found for: " .. server_name .. ". Proceeding with defaults...")
-                        require("lspconfig")[server_name].setup(server_opts)
-                        return
-                    end
-                    if server_name == "hyprls" then
-                        -- hyprlang treesitter config
-                        vim.filetype.add({
-                            pattern = { [".*/hypr/.*%.conf"] = "hyprlang" },
-                        })
+            for k,v in pairs(servers) do
+                vim.lsp.config(k, v)
+            end
+            
+            -- hyprls
+            vim.filetype.add({
+                pattern = { [".*/hypr/.*%.conf"] = "hyprlang" },
+            })
 
-                        -- Hyprlang LSP
-                        vim.api.nvim_create_autocmd({'BufEnter', 'BufWinEnter'}, {
-                            pattern = {"*.hl", "hypr*.conf"},
-                            callback = function(event)
-                                print(string.format("starting hyprls for %s", vim.inspect(event)))
-                                vim.lsp.start {
-                                    name = "hyprlang",
-                                    cmd = {"hyprls"},
-                                    root_dir = vim.fn.getcwd(),
-                                }
-                            end
-                        })
-                    end
-                    for k,v in pairs(server_specific_opts) do
-                        server_opts[k] = v
-                    end
-                    require("lspconfig")[server_name].setup(server_opts)
+            -- Hyprlang LSP
+            vim.api.nvim_create_autocmd({'BufEnter', 'BufWinEnter'}, {
+                pattern = {"*.hl", "hypr*.conf"},
+                callback = function(event)
+                    print(string.format("starting hyprls for %s", vim.inspect(event)))
+                    vim.lsp.start {
+                        name = "hyprlang",
+                        cmd = {"hyprls"},
+                        root_dir = vim.fn.getcwd(),
+                    }
                 end
-            }
+            })
         end
     },
 }

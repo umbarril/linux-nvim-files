@@ -7,7 +7,7 @@ return {
             { "hrsh7th/cmp-path",     lazy=true },
             { "hrsh7th/cmp-nvim-lua", lazy=true },
             { "hrsh7th/cmp-nvim-lsp", lazy=true },
-            { "saadparwaiz1/cmp_luasnip", lazy=true},
+            { "saadparwaiz1/cmp_luasnip", lazy=true },
             { "onsails/lspkind.nvim", lazy=true}, -- vscode like autocomplete option pane 
             {
                 "hrsh7th/vim-vsnip",

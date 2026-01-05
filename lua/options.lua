@@ -1,13 +1,16 @@
 local opt = vim.opt
 
+-- neovide
+vim.o.guifont="JetBrainsMono NF:h10"
+
 -- leader key NEEDS be defined before any plugin tries to use it
 vim.g.mapleader = " "
 vim.g.maplocalleader = ","
 
 -- vim.cmd [[ colorscheme habamax ]]
 vim.cmd [[
-  highlight Error guibg=red
-  highlight link Warning Error
+    highlight Error guibg=red
+    highlight link Warning Error
 ]]
 
 -- HOW DID I LIVE WITHOUT THIS BEFORE???? 

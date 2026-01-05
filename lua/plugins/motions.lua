@@ -20,7 +20,7 @@ return {
             "tpope/vim-repeat" -- for dot-repeats (.) to work
         },
         config = function()
-            require('leap').add_default_mappings()
+            -- require('leap').add_default_mappings()
         end
     },
     -- { -- F and T on steroids

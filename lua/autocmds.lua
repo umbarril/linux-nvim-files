@@ -1,135 +1,191 @@
+
+---- AUTOCMDS ----
+
 vim.api.nvim_create_autocmd('TextYankPost', {
 	callback = function() vim.highlight.on_yank() end
 })
 
 local mygroup = vim.api.nvim_create_augroup('vimrc', { clear = true })
 vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufRead' }, {
-  pattern = '*.html',
-  group = mygroup,
-  command = 'set shiftwidth=4',
+    pattern = '*.html',
+    group = mygroup,
+    command = 'set shiftwidth=4',
 })
 
 vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufRead' }, {
-  pattern = '*.html',
-  group = 'vimrc',  -- equivalent to group=mygroup
-  command = 'set expandtab',
+    pattern = '*.html',
+    group = mygroup,
+    command = 'set expandtab',
 })
 
 vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufRead' }, {
-  pattern = 'MAKEFILE',
-  command = 'set noexpandtab',
+    pattern = 'MAKEFILE',
+    command = 'set noexpandtab',
 })
 
-vim.cmd [[
-    " stop vim to autocomment when pressing o/O or Enter
-    augroup NoAutoComment
-    au!
-    au FileType * setlocal formatoptions-=cr
-    " read more in :h 'formatoptions'
-    augroup end
+vim.api.nvim_create_augroup("NoAutoComment", { clear = true })
+vim.api.nvim_create_autocmd("FileType", {
+      group = "NoAutoComment",
+      pattern = "*",
+      callback = function()
+        vim.opt_local.formatoptions:remove({ "c", "r" })
+      end,
+})
 
-    au TabLeave * let g:lasttab = tabpagenr()
+vim.api.nvim_create_autocmd("TabLeave", {
+      pattern = "*",
+      callback = function()
+        vim.g.lasttab = vim.fn.tabpagenr()
+      end,
+})
 
-    " copied from https://github.com/ThePrimeagen/.dotfiles/blob/master/nvim/.config/nvim/init.vim
-    " and https://www.youtube.com/watch?v=n9k9scbTuvQ
-    " Return to last edit position when opening files (You want this!)
-    au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+-- converted to lua from https://github.com/ThePrimeagen/.dotfiles/blob/master/nvim/.config/nvim/init.vim
+-- and https://www.youtube.com/watch?v=n9k9scbTuvQ
+-- Return to last edit position when opening files (You want this!)
+vim.api.nvim_create_autocmd("BufReadPost", {
+      pattern = "*",
+      callback = function()
+        local line = vim.fn.line([['"]])
+        if line > 1 and line <= vim.fn.line("$") then
+              vim.cmd([[normal! g`"]])
+        end
+      end,
+})
 
-    augroup highlight_yank
-        autocmd!
-        autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank({timeout = 40})
-    augroup END
+vim.api.nvim_create_autocmd("VimResized", {
+      callback = function()
+        vim.cmd("wincmd =")
+      end,
+})
 
-    autocmd VimResized * wincmd =
+-- Filetype detection
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+      pattern = "requirements*.txt",
+      callback = function()
+        vim.bo.filetype = "python"
+      end,
+})
 
-    " copied from https://github.com/nickjj/dotfiles/blob/19397b0f4cdd98feb38f94612851235b8f0d883e/.vimrc#L376-L380
-    autocmd BufNewFile,BufRead requirements*.txt set ft=python
-    autocmd BufNewFile,BufRead .*aliases set ft=sh
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+      pattern = ".*aliases",
+      callback = function()
+        vim.bo.filetype = "sh"
+      end,
+})
 
-    " Ensure tabs don't get converted to spaces in Makefiles.
-    autocmd FileType make setlocal noexpandtab
+-- Ensure tabs don't get converted to spaces in Makefiles.
+vim.api.nvim_create_autocmd("FileType", {
+      pattern = "make",
+      callback = function()
+        vim.opt_local.expandtab = false
+      end,
+})
 
-    autocmd BufWinLeave *.* mkview
-    autocmd BufWinLeave *.* silent loadview
+-- save and load view
+vim.api.nvim_create_autocmd("BufWinLeave", {
+      pattern = "*.*",
+      command = "mkview",
+})
 
-    " automatically format everytime you save the file
-    " autocmd BufWritePost * exe "normal! gg=G\<C-o>zz"
+-- TODO: ver pq isso n ta funcionando
+-- vim.api.nvim_create_autocmd("BufWinEnter", {
+--       pattern = "*.*",
+--       command = "silent loadview",
+-- })
 
-    " change scroll offset
-    autocmd VimResized,VimEnter,WinEnter * let &scrolloff = winheight(0) / 6
+-- vim.api.nvim_create_autocmd("BufWritePost", {
+--   pattern = "*",
+--   callback = function()
+--     vim.cmd([[normal! gg=G\<C-o>zz]])
+--   end,
+-- })
 
-    au FocusGained,BufEnter * checktime
+-- change scroll offset
+vim.api.nvim_create_autocmd({ "VimResized", "VimEnter", "WinEnter" }, {
+      pattern = "*",
+      callback = function()
+        vim.o.scrolloff = math.floor(vim.fn.winheight(0) / 6)
+      end,
+})
 
-    highlight ColorColmn ctermbg=0 guibg=lightgrey
-    function! VisualSelection(direction, extra_filter) range
-        let l:saved_reg = @"
-        execute "normal! vgvy"
+-- auto-check file change from outside neovim
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter" }, {
+      pattern = "*",
+      command = "checktime",
+})
 
-        let l:pattern = escape(@", "\\/.*'$^~[]")
-        let l:pattern = substitute(l:pattern, "\n$", "", "")
+-- make gx work on packge.json (https://doriankarter.com/customize-vims-gx-mapping/)
+local function package_json_gx()
+      local line = vim.fn.getline(".")
+      local package = vim.fn.matchlist(line, [[\v"(.*)": "(.*)"]])
+      if #package > 1 then
+            local name = package[2]
+        local url = "https://www.npmjs.com/package/" .. name
+        vim.fn["netrw#BrowseX"](url, 0)
+      end
+end
 
-        if a:direction == 'gv'
-            call CmdLine("Ack '" . l:pattern . "' " )
-        elseif a:direction == 'replace'
-            call CmdLine("%s" . '/'. l:pattern . '/')
-        endif
+vim.api.nvim_create_augroup("PackageJsonGx", { clear = true })
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+      group = "PackageJsonGx",
+      pattern = "package.json",
+      callback = function()
+        vim.keymap.set("n", "gx", package_json_gx, { buffer = true, silent = true })
+      end,
+})
 
-        let @/ = l:pattern
-        let @" = l:saved_reg
-    endfunction
+-- TODO: make gx work on obsidian.md markdown files
+-- local function obsidian_gx()
+--     local line = vim.fn.getline(".")
+--     local link = line:match("%[%[([^%]]+)%]%]")
+--     if link then
+--         -- Customize this path or command to match your system/Obsidian vault
+--         local vault_path = os.getenv("HOME") .. "/Documents/ObsidianVault/"
+--         local filepath = vault_path .. link .. ".md"
+--         vim.cmd("edit " .. filepath)
+--     end
+-- end
+--
+-- vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+--       pattern = "*.md",
+--       callback = function()
+--         vim.keymap.set("n", "gx", obsidian_gx, { buffer = true, silent = true })
+--       end,
+-- })
 
-    " make gx work on packge.json (https://doriankarter.com/customize-vims-gx-mapping/)
-    function! PackageJsonGx() abort
-        let l:line = getline('.')
-        let l:package = matchlist(l:line, '\v"(.*)": "(.*)"')
+-- a way of making folds look better
+-- stolen originally from https://github.com/nvim-treesitter/nvim-treesitter/pull/390
+_G.MyFoldText = function()
+      local startLine = vim.fn.getline(vim.v.foldstart)
+      local endLine = vim.fn.trim(vim.fn.getline(vim.v.foldend))
 
-        if len(l:package) > 0
-            let l:package_name = l:package[1]
-            let l:url = 'https://www.npmjs.com/package/' . l:package_name
-            call netrw#BrowseX(l:url, 0)
-        endif
-    endfunction
+      local indent = string.rep(" ", vim.fn.indent(vim.v.foldstart))
+      local fill = string.rep(" ", 200)
 
-    augroup PackageJsonGx
-        autocmd!
-        autocmd BufRead,BufNewFile package.json nnoremap <buffer> <silent> gx :call PackageJsonGx()<cr>
-    augroup END
+      return indent .. startLine .. "..." .. endLine .. fill
+end
 
-    " TODO: make gx work on obsidian.md markdown files
-    function! ObsidianMD() abort
-        let l:line = getline('.')
-        let [line, column] = getpos('.')
-        let l:package = matchlist(l:line, '\v"(.*)": "(.*)"')
+vim.opt.foldtext = 'v:lua.MyFoldText()'
 
-        if len(l:package) > 0
-            call netrw#BrowseX(l:url, 0)
-        endif
-    endfunction
+-- Cria todos os diretorios necessarios para que voce consiga salvar o ARQUIVO
+-- Exemplo: salvar .config/tmux/tmux.conf sendo que .config/tmux nao existe ainda
+local function mk_non_ex_dir(file, buf)
+      local buftype = vim.api.nvim_buf_get_option(buf, "buftype")
+  if buftype == "" and not file:match("^%w+:/") then
+            local dir = vim.fn.fnamemodify(file, ":h")
+    if vim.fn.isdirectory(dir) == 0 then
+              vim.fn.mkdir(dir, "p")
+    end
+  end
+end
 
-    " a way of making folds look better
-    " stolen from https://github.com/nvim-treesitter/nvim-treesitter/pull/390
-    function! GetSpaces(foldLevel)
-        if &expandtab == 1
-            Indenting with spaces
-            let str = repeat(" ", a:foldLevel / (&shiftwidth + 1) - 1)
-            return str
-        elseif &expandtab == 0
-            " Indenting with tabs
-            return repeat(" ", indent(v:foldstart) - (indent(v:foldstart) / &shiftwidth))
-        endif
-    endfunction
+vim.api.nvim_create_augroup("BWCCreateDir", { clear = true })
 
-    function! MyFoldText()
-        let startLineText = getline(v:foldstart)
-        let endLineText = trim(getline(v:foldend))
-        let indentation = GetSpaces(foldlevel("."))
-        let spaces = repeat(" ", 200)
+vim.api.nvim_create_autocmd("BufWritePre", {
+      group = "BWCCreateDir",
+      pattern = "*",
+      callback = function(args)
+        mk_non_ex_dir(vim.fn.expand("<afile>"), args.buf)
+  end,
+})
 
-        let str = indentation . startLineText . "..." . endLineText . spaces
-
-        return str
-    endfunction
-
-    " Custom display for text when folding
-    set foldtext=MyFoldText()
-]]
