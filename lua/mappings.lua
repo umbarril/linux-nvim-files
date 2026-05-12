@@ -21,6 +21,9 @@ vim.cmd [[
     xnoremap <expr> <Tab> mode() ==# "V" ? ">gv"  : "<Tab>"
 ]]
 
+-- because I can't ditch old habits
+nmap("<C-f>", "/")
+
 -- allow using Shift+Tab in insert mode
 imap("<S-Tab>", "<esc>v<li")
 

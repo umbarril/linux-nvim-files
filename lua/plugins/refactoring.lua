@@ -4,7 +4,7 @@ return  {
         "nvim-lua/plenary.nvim",
         "nvim-treesitter/nvim-treesitter",
     },
-    -- lazy = false,
+    lazy = false,
     
     keys = {
         { "<leader>re", function() return require('refactoring').refactor('Extract Function') end, mode = "x" },
@@ -15,7 +15,8 @@ return  {
         { "<leader>rbb", function() return require('refactoring').refactor('Extract Block') end, mode = "x"},
         { "<leader>rbf", function() return require('refactoring').refactor('Extract Block To File') end, mode = "x"}
     },
-    config = function()
-        require("refactoring").setup()
-    end,
+    opts = {}
+    -- config = function()
+    --     require("refactoring").setup()
+    -- end,
 }

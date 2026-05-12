@@ -15,13 +15,14 @@ return {
     },
     -- vim-sneak-like plugin
     {
-        "ggandor/leap.nvim",
+        url = "https://codeberg.org/andyg/leap.nvim",
         dependencies = {
             "tpope/vim-repeat" -- for dot-repeats (.) to work
         },
-        config = function()
-            -- require('leap').add_default_mappings()
-        end
+        keys = { -- see more on :help leap
+            { "s", "<Plug>(leap-forward)", mode = { "n", "o", "x" }, },
+            { "S", "<Plug>(leap-backward)", mode = { "n", "o", "x" }, },
+        }
     },
     -- { -- F and T on steroids
     --     "ggandor/flit.nvim",
@@ -47,5 +48,8 @@ return {
         vim.g.matchup_matchparen_offscreen = { method = "popup" }
         end
     },
-    { "psliwka/vim-smoothie" },
+    {
+        "karb94/neoscroll.nvim",
+        opts = {}
+    },
 }

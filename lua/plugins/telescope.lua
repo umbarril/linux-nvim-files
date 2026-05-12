@@ -38,12 +38,11 @@ return {
         },
         keys = {
             {'<leader>ff', function() require('telescope.builtin').find_files() end, desc = "Telescope Find Files"},
-            {'<C-S-n>', function() require('telescope.builtin').live_grep() end, desc = "Telescope Livegrep"}, -- neovide only
-
-            {'<leader>fg', function() require('telescope.builtin').live_grep() end, desc = "Telescope Livegrep"},
+            {'<leader>F', function() require('telescope.builtin').live_grep() end, desc = "Telescope Livegrep"},
+            {'<leader>F', function() require('telescope.builtin').grep_string() end, desc = "Telescope Find Word", mode = 'v' },
+            -- you need to add this line to kitty.conf to make <c-s-f> work: 
+            -- map ctrl+shift+f send_text all \x1b[70;5u
             {'<C-S-f>', function() require('telescope.builtin').live_grep() end, desc = "Telescope Livegrep"}, -- neovide only
-
-            {'<leader>fg', function() require('telescope.builtin').grep_string() end, desc = "Telescope Find Word", mode = 'v' },
             {'<C-S-f>', function() require('telescope.builtin').grep_string() end, desc = "Telescope Find Word", mode = 'v' },
 
             {'<leader>fs', function() require('telescope.builtin').lsp_workspace_symbols() end, desc = "Telescope Workspace Symbols" },
